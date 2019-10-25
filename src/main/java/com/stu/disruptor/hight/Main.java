@@ -3,6 +3,7 @@ package com.stu.disruptor.hight;
 import com.lmax.disruptor.BusySpinWaitStrategy;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
+import com.lmax.disruptor.dsl.EventHandlerGroup;
 import com.lmax.disruptor.dsl.ProducerType;
 
 import java.util.concurrent.CountDownLatch;
@@ -33,10 +34,18 @@ public class Main {
          */
 
         //并行操作 的两种方式
-        disruptor.handleEventsWith(new HandlerOne(),new HandlerTwo(),new HandlerThree());
+//        disruptor.handleEventsWith(new HandlerOne(),new HandlerTwo(),new HandlerThree());
 //        disruptor.handleEventsWith(new HandlerTwo());
 //        disruptor.handleEventsWith(new HandlerThree());
 
+        //菱形操作
+//        disruptor.handleEventsWith(new HandlerOne(),new HandlerTwo())
+//                .handleEventsWith(new HandlerThree());
+        //菱形操作2
+//        EventHandlerGroup<Trade> ehg = disruptor.handleEventsWith(new HandlerOne(), new HandlerTwo());
+//        ehg.then(new HandlerThree());
+
+        // 六边形操作 disruptor.after.handleEventsWith()
 
 
         //启动disruptor
