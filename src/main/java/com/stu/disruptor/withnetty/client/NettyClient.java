@@ -1,8 +1,11 @@
 package com.stu.disruptor.withnetty.client;
 
-import com.stu.disruptor.hight.Main;
+import com.lmax.disruptor.BlockingWaitStrategy;
+import com.lmax.disruptor.dsl.ProducerType;
 import com.stu.disruptor.withnetty.common.TranslatorData;
 import com.stu.disruptor.withnetty.common.codec.MarshallingCodeCFactory;
+import com.stu.disruptor.withnetty.common.disruptor.MessageConsumer;
+import com.stu.disruptor.withnetty.common.disruptor.RingBufferWorkerPoolFactory;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
@@ -81,6 +84,12 @@ public class NettyClient {
     }
 
     public static void main(String[] args) {
+        MessageConsumer[] consumers = new MessageConsumer[4];
+        for (int i = 0; i < consumers.length; i++) {
+            MessageConsumer messageConsumer = new MessageConsumerImpl4Client("code:clientId:"+i);
+            consumers[i] = messageConsumer;
+        }
+        RingBufferWorkerPoolFactory.getInstance().initAndStart(ProducerType.MULTI,1024*1024,new BlockingWaitStrategy(),consumers);
         NettyClient nettyClient = new NettyClient();
         nettyClient.sendDate();
     }

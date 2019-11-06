@@ -1,6 +1,10 @@
 package com.stu.disruptor.withnetty.server;
 
+import com.lmax.disruptor.BlockingWaitStrategy;
+import com.lmax.disruptor.dsl.ProducerType;
 import com.stu.disruptor.withnetty.common.codec.MarshallingCodeCFactory;
+import com.stu.disruptor.withnetty.common.disruptor.MessageConsumer;
+import com.stu.disruptor.withnetty.common.disruptor.RingBufferWorkerPoolFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
@@ -61,6 +65,12 @@ public class NettyServer {
     }
 
     public static void main(String[] args) {
+        MessageConsumer[] consumers = new MessageConsumer[4];
+        for (int i = 0; i < consumers.length; i++) {
+            MessageConsumer messageConsumer = new MessageConsumerImpl4Server("code:serverId:"+i);
+            consumers[i] = messageConsumer;
+        }
+        RingBufferWorkerPoolFactory.getInstance().initAndStart(ProducerType.MULTI,1024*1024,new BlockingWaitStrategy(),consumers);
         new NettyServer();
     }
 
